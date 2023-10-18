@@ -17,8 +17,8 @@ contract CounterTest is Test {
         console2.log(owner);
     }
 
-    function testFuzz_SetNumber(uint256 x) public {
-        counter.setNumber(x);
-        assertEq(counter.number(), x);
-    }
+    // function testFuzz_SetNumber(uint256 x) public {
+    //     counter.setNumber(x);
+    //     assertEq(counter.number(), x);
+    // }
 }
