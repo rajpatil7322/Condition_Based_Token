@@ -14,7 +14,7 @@ interface ICondition{
 }
 
 contract PurposeWrapper is Context, IERC20Errors {
-    IERC20 private immutable _underlying;
+    IERC20 public immutable _underlying;
 
     event Transfer(address indexed from, address indexed to, uint256 value);
 
