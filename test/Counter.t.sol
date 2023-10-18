@@ -3,18 +3,18 @@ pragma solidity ^0.8.13;
 
 import {Test, console2} from "forge-std/Test.sol";
 import {Counter} from "../src/Counter.sol";
+import {MyToken} from "../src/MyToken.sol";
 
 contract CounterTest is Test {
-    Counter public counter;
+    MyToken public myToken;
 
     function setUp() public {
-        counter = new Counter();
-        counter.setNumber(0);
+        mytoken=new MyToken();
     }
 
     function test_Increment() public {
-        counter.increment();
-        assertEq(counter.number(), 1);
+        address owner=mytoken.owner();
+        console2.log(owner);
     }
 
     function testFuzz_SetNumber(uint256 x) public {
