@@ -8,7 +8,7 @@ contract Condition {
         to=_to;
     }
 
-    function runCondition(address _to,uint256 value) external returns(bool){
+    function runCondition(address _to,uint256 value) external view returns(bool){
         require(to==_to);
         require(value<=100);
         return true;

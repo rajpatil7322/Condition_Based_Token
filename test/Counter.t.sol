@@ -23,6 +23,7 @@ contract CounterTest is Test {
         addr2=vm.addr(2);
         addr3=vm.addr(3);
         addr4=vm.addr(4);
+        console2.log(addr1);
 
         vm.prank(addr1);
         mytoken=new MyToken();
@@ -76,8 +77,9 @@ contract CounterTest is Test {
         assertEq(mytoken.balanceOf(addr3),200);
     }
 
-    // function testFuzz_SetNumber(uint256 x) public {
-    //     counter.setNumber(x);
-    //     assertEq(counter.number(), x);
-    // }
+    function testFuzz_SetNumber(uint256 x) public {
+        vm.prank(addr1);
+        mytoken.mint(x);
+        assertEq(mytoken.balanceOf(addr1), x);
+    }
 }
