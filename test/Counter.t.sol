@@ -2,7 +2,6 @@
 pragma solidity ^0.8.13;
 
 import {Test, console2} from "forge-std/Test.sol";
-import {Counter} from "../src/Counter.sol";
 import {MyToken} from "../src/MyToken.sol";
 import {PurposeWrapper} from "../src/PurposeWrapper.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
