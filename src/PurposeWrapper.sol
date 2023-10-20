@@ -10,7 +10,7 @@ import {Context} from "@openzeppelin/contracts/utils/Context.sol";
 import {IERC20Errors} from "@openzeppelin/contracts/interfaces/draft-IERC6093.sol";
 
 interface ICondition{
-    function runCondition(address to,uint256 value) external returns(bool);
+    function runCondition(bytes memory data) external returns(bool);
 }
 
 contract PurposeWrapper is Context, IERC20Errors {
@@ -230,14 +230,14 @@ contract PurposeWrapper is Context, IERC20Errors {
     }
 
 
-    function withdrawTo(address account, uint256 value,uint256 condition_id) public returns (bool) {
+    function withdrawTo(address account, uint256 value,uint256 condition_id,bytes memory data) public returns (bool) {
         if (account == address(this)) {
             revert ERC20InvalidReceiver(account);
         }
         require(value<=user_to_conditions[msg.sender][condition_id].amount,"Value is wrong");
         user_to_conditions[msg.sender][condition_id].amount-=value;
         address _condition_contract=user_to_conditions[msg.sender][condition_id].condition_contract;
-        require(ICondition(_condition_contract).runCondition(account,value)==true,"Condition contract reverted");
+        require(ICondition(_condition_contract).runCondition(data)==true,"Condition contract reverted");
 
         _burn(_msgSender(), value);
         SafeERC20.safeTransfer(_underlying, account, value);
