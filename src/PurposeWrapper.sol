@@ -51,8 +51,12 @@ contract PurposeWrapper is Context, IERC20Errors {
         _symbol=Symbol;
     }
 
-      function name() public view  returns (string memory) {
+    function name() public view  returns (string memory) {
         return _name;
+    }
+
+    function getCondition(address user) public view returns(Condition[] memory){
+        return user_to_conditions[user];
     }
 
     /**
@@ -106,6 +110,28 @@ contract PurposeWrapper is Context, IERC20Errors {
         _transfer(from, to, value,condition_id);
         return true;
     }
+    
+    function exists(address from,address to,uint256 value,uint256 id) internal returns(bool){
+        address condition_contract=user_to_conditions[from][id].condition_contract;
+       if(user_to_conditions[to].length==0){
+         user_to_conditions[from][id].amount-=value;
+        addCondition(to, value, user_to_conditions[from][id].condition_contract);
+        _update(from, to, value);
+        return true;
+       }
+       for(uint256 i=0;i<user_to_conditions[to].length;i++){
+        if(condition_contract==user_to_conditions[to][i].condition_contract){
+            user_to_conditions[to][i].amount+=value;
+            _update(from, to, value);
+        }
+        else{
+            user_to_conditions[from][id].amount-=value;
+            addCondition(to, value, user_to_conditions[from][id].condition_contract);
+            _update(from, to, value);
+        }
+       }
+      
+    }
 
     function _transfer(address from, address to, uint256 value,uint256 condition_id) internal {
         if (from == address(0)) {
@@ -115,9 +141,10 @@ contract PurposeWrapper is Context, IERC20Errors {
             revert ERC20InvalidReceiver(address(0));
         }
         require(value<=user_to_conditions[from][condition_id].amount);
-        user_to_conditions[from][condition_id].amount-=value;
-        addCondition(to, value, user_to_conditions[from][condition_id].condition_contract);
-        _update(from, to, value);
+        // user_to_conditions[from][condition_id].amount-=value;
+        // addCondition(to, value, user_to_conditions[from][condition_id].condition_contract);
+        // _update(from, to, value);
+        exists(from,to,value,condition_id);
     }
 
     function _update(address from, address to, uint256 value) internal virtual {

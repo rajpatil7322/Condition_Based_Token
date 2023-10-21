@@ -59,19 +59,28 @@ async function main(){
 
     //0x5df847f4e6dc9795a0d45925e067842dafcf85bdff0b86b56d59e53a3174730c
 
-    // const attest_data=await EAS_Contract.getAttestation("0x5df847f4e6dc9795a0d45925e067842dafcf85bdff0b86b56d59e53a3174730c");
-    // console.log(attest_data);
+    const attest_data=await EAS_Contract.getAttestation("0x5df847f4e6dc9795a0d45925e067842dafcf85bdff0b86b56d59e53a3174730c");
+    console.log(attest_data);
 
     const data=ethers.utils.defaultAbiCoder.encode(["address","uint256","bytes32"],[user3,100,"0x5df847f4e6dc9795a0d45925e067842dafcf85bdff0b86b56d59e53a3174730c"]);
-    // console.log(data);
-
-    // const tx=condition.getRecepient(attest_data.uid);
-    // console.log(await tx);
+    console.log(data);
 
     const withdrawToTx=await purposewrapper.connect(provider.getSigner(1)).withdrawTo(user3,100,0,data);
     await withdrawToTx.wait();
 
-    console.log("Balance of user3",Number(await mytoken.balanceOf(user3)))
+    // console.log(Number(await purposewrapper.getCondition(user5)));
+
+    // const tx4=await purposewrapper.connect(provider.getSigner(1)).transfer(user3,100,0);
+    // await tx4.wait();
+
+    // const tx5=await purposewrapper.connect(provider.getSigner(1)).transfer(user3,100,0);
+    // await tx5.wait();
+
+    // const con=await purposewrapper.getCondition(user3);
+    // console.log(con);
+
+
+    console.log("Balance of user3",Number(await purposewrapper.balanceOf(user3)))
     console.log("Balance of user2",Number(await purposewrapper.balanceOf(user2)))
 
 
