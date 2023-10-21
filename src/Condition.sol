@@ -15,7 +15,6 @@ contract Condition {
        
     }
 
-
     function runCondition(bytes memory data) external view returns(bool){
         (address to,uint256 amount,bytes32 uid)=abi.decode(data,(address,uint256,bytes32));
         require(to==0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC);
