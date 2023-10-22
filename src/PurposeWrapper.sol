@@ -264,7 +264,12 @@ contract PurposeWrapper is Context, IERC20Errors {
         require(value<=user_to_conditions[msg.sender][condition_id].amount,"Value is wrong");
         user_to_conditions[msg.sender][condition_id].amount-=value;
         address _condition_contract=user_to_conditions[msg.sender][condition_id].condition_contract;
-        require(ICondition(_condition_contract).runCondition(data)==true,"Condition contract reverted");
+        // require(ICondition(_condition_contract).runCondition(data)==true,"Condition contract reverted");
+        (bool success, bytes memory _data) = _condition_contract.call(
+            abi.encodeWithSignature("runCondition(address,uint256,bytes)",account,value,data)
+        );
+        require(success,"Call to condition contract failed");
+        require(abi.decode(_data,(bool))==true,"Condition not satisfied");
 
         _burn(_msgSender(), value);
         SafeERC20.safeTransfer(_underlying, account, value);

@@ -2,7 +2,6 @@ const {ethers}=require("ethers");
 const hre = require("hardhat");
 const MytokenData=require("../artifacts/src/MyToken.sol/MyToken.json");
 const PurposeWrapperData=require("../artifacts/src/PurposeWrapper.sol/PurposeWrapper.json");
-const ConditionData=require("../artifacts/src/Condition.sol/Condition.json");
 const abi=require('./EAS_Abi.json');
 
 async function main(){
@@ -16,16 +15,12 @@ async function main(){
 
     const MyTokenfactory= new ethers.ContractFactory(MytokenData.abi,MytokenData.bytecode,provider.getSigner(0));
     const PurposeWrapperfactory= new ethers.ContractFactory(PurposeWrapperData.abi,PurposeWrapperData.bytecode,provider.getSigner(0));
-    const ConditionFactory=new ethers.ContractFactory(ConditionData.abi,ConditionData.bytecode,provider.getSigner(0));
 
     const mytoken=await MyTokenfactory.deploy();
     console.log("MyToken deployed At",mytoken.address);
 
     const purposewrapper=await PurposeWrapperfactory.deploy(mytoken.address,"MTK","MYTOKEN");
     console.log("PurposeWrapper deployed At",purposewrapper.address);
-    
-    const condition=await ConditionFactory.deploy();
-    console.log("Condition contract deployed at:",condition.address);
 
     const mintTx=await mytoken.connect(provider.getSigner(0)).mint(1000);
     await mintTx.wait();
@@ -34,7 +29,7 @@ async function main(){
     const allowTx=await mytoken.connect(provider.getSigner(0)).approve(purposewrapper.address,200);
     await allowTx.wait();
 
-    const transferTx=await purposewrapper.connect(provider.getSigner(0)).depositFor(user2,200,condition.address);
+    const transferTx=await purposewrapper.connect(provider.getSigner(0)).depositFor(user2,200,"0xBFf03dF70F0da9A31B775cba6A338B9BC6d7991b");
     await transferTx.wait();
 
     console.log("Balance of user1",Number(await mytoken.balanceOf(user1)));
@@ -57,13 +52,14 @@ async function main(){
     // const attestTx=await EAS_Contract.connect(provider.getSigner(3)).attest(attestation_data);
     // console.log(await attestTx.wait());
 
-    //0x4bb045dace541d883e081f8b680b9138a4f18468d62f0c0950e057e8560f4e13
+    //0x2aa6719212ed2f3dae9024bc53e435f70c9a22a01f265bbc9d147c4dda3e5355
 
     // const attest_data=await EAS_Contract.getAttestation("0x4bb045dace541d883e081f8b680b9138a4f18468d62f0c0950e057e8560f4e13");
     // console.log(attest_data);
 
-    const data=ethers.utils.defaultAbiCoder.encode(["address","uint256","bytes32"],[user3,100,"0x4bb045dace541d883e081f8b680b9138a4f18468d62f0c0950e057e8560f4e13"]);
-
+    // const data=ethers.utils.defaultAbiCoder.encode(["address","uint256","bytes32"],[user3,100,"0x4bb045dace541d883e081f8b680b9138a4f18468d62f0c0950e057e8560f4e13"]);
+    const data=ethers.utils.defaultAbiCoder.encode(["bytes32"],["0x2aa6719212ed2f3dae9024bc53e435f70c9a22a01f265bbc9d147c4dda3e5355"]);
+        
     const withdrawToTx=await purposewrapper.connect(provider.getSigner(1)).withdrawTo(user3,100,0,data);
     await withdrawToTx.wait();
 
